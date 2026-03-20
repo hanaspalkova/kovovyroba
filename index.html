@@ -539,6 +539,9 @@ function onCostChange(i, v) {
 function setScenario(key) {
   document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('btn-' + key).classList.add('active');
+
+  document.getElementById('s-hours').value = SCENARIOS[key].hours;
+  updateCalc();
 }
 
 /* ─── CALCULATOR ─── */
