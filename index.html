@@ -362,7 +362,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
             <span class="pos" id="r-ann-net">1 021 500 Kč</span>
           </div>
           <div class="res-row" style="padding:.3rem 0;font-size:.85rem;border-bottom:none">
-            <span>Návratnost inv. 225 000 Kč</span>
+            <span>Návratnost inv. 350 000 Kč</span>
             <span id="r-roi" class="neutral">2,2 měs.</span>
           </div>
         </div>
@@ -382,7 +382,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
         <canvas id="chartScenarios"></canvas>
       </div>
       <div class="chart-card">
-        <h3>Návratnost investice 225 000 Kč (kumulativní zisk)</h3>
+        <h3>Návratnost investice 350 000 Kč (kumulativní zisk)</h3>
         <canvas id="chartROI"></canvas>
       </div>
     </div>
@@ -417,9 +417,6 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
         <tr><td><b>Doporučená celková rezerva</b></td><td><b>305 000 – 425 000 Kč</b></td></tr>
       </tbody>
     </table>
-    <div class="alert-box">
-      <i class="fa-solid fa-triangle-exclamation"></i> Vstupní investice <b>225 000 Kč</b> je na spodní hranici. Doporučujeme mít k dispozici min. <b>350 000 Kč</b> celkové rezervy včetně 3měsíčního provozního polštáře.
-    </div>
   </section>
 
   <!-- MILNÍKY -->
@@ -565,7 +562,7 @@ function updateCalc() {
   const net       = profitPre - tax;
   const breakeven = fixed / rate;
   const bePct     = Math.round(breakeven / 140 * 100);
-  const roi       = profitPre > 0 ? (225000 / profitPre) : Infinity;
+  const roi       = profitPre > 0 ? (350000 / profitPre) : Infinity;
 
   // display labels
   document.getElementById('d-rate').textContent   = fmtN(rate) + ' Kč/hod';
@@ -602,7 +599,7 @@ function updateCalc() {
   // update ROI chart current-calc line
   if (roiChart) {
     const months = Array.from({length:25}, (_,i) => i);
-    roiChart.data.datasets[3].data = months.map(m => -225000 + profitPre * m);
+    roiChart.data.datasets[3].data = months.map(m => -350000 + profitPre * m);
     roiChart.update('none');
   }
 }
@@ -649,25 +646,25 @@ function initROIChart() {
       datasets:[
         {
           label:'Pesimistický (47k/měs)',
-          data: months.map(m => -225000 + 47000*m),
+          data: months.map(m => -350000 + 47000*m),
           borderColor:'#e74c3c', backgroundColor:'transparent',
           borderWidth:2, pointRadius:0, tension:.3,
         },
         {
           label:'Realistický (103k/měs)',
-          data: months.map(m => -225000 + 103000*m),
+          data: months.map(m => -350000 + 103000*m),
           borderColor:'#3498db', backgroundColor:'transparent',
           borderWidth:2, pointRadius:0, tension:.3,
         },
         {
           label:'Optimistický (138k/měs)',
-          data: months.map(m => -225000 + 138000*m),
+          data: months.map(m => -350000 + 138000*m),
           borderColor:'#2ecc71', backgroundColor:'transparent',
           borderWidth:2, pointRadius:0, tension:.3,
         },
         {
           label:'Váš výpočet',
-          data: months.map(m => -225000 + 103000*m),
+          data: months.map(m => -350000 + 103000*m),
           borderColor:'#f39c12', backgroundColor:'transparent',
           borderWidth:2, borderDash:[5,5], pointRadius:0, tension:.3,
         },
