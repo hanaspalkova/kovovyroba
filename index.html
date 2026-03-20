@@ -67,7 +67,7 @@ section{margin-bottom:2.5rem}
 
 /* ── METRIC CARDS ── */
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem}
-.m-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1rem;transition:transform .2s}
+.m-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1rem;transition:transform .2s;position:relative}
 .m-card:hover{transform:translateY(-3px)}
 .m-icon{font-size:1.6rem;margin-bottom:.4rem;display:block}
 .m-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
@@ -77,6 +77,20 @@ section{margin-bottom:2.5rem}
 .col-red .m-value{color:var(--red)}
 .col-green .m-value{color:var(--green)}
 .col-orange .m-value{color:var(--accent)}
+
+/* ── BREAKEVEN TIP ── */
+.be-tip{display:inline;margin-left:.3rem}
+.be-tip summary{display:inline;cursor:pointer;font-size:.8rem;list-style:none;opacity:.6;transition:opacity .2s;user-select:none}
+.be-tip summary::-webkit-details-marker{display:none}
+.be-tip summary:hover{opacity:1}
+.be-tip[open] summary{opacity:1}
+.be-tip-box{
+  position:absolute;z-index:10;
+  background:#1f2e42;border:1px solid var(--accent);border-radius:8px;
+  padding:.65rem .85rem;font-size:.78rem;line-height:1.5;color:var(--text);
+  max-width:240px;margin-top:.3rem;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+}
 
 /* ── BREAKEVEN BAR ── */
 .be-bar-wrap{margin-top:.75rem;background:var(--bg2);border-radius:8px;overflow:hidden;height:8px}
@@ -242,7 +256,13 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
       </div>
       <div class="m-card col-orange">
         <span class="m-icon">⏱️</span>
-        <div class="m-label">Break-even</div>
+        <div class="m-label">
+          Break-even
+          <details class="be-tip">
+            <summary>ℹ️</summary>
+            <div class="be-tip-box">Minimální počet hodin, které musíš měsíčně vyfakturovat, aby pokryly všechny fixní náklady. Pod touto hranicí děláš ztrátu, nad ní začínáš vydělávat.</div>
+          </details>
+        </div>
         <div class="m-value" id="m-be">37 hod</div>
         <div class="m-sub" id="m-be-pct">~26 % kapacity</div>
         <div class="be-bar-wrap" style="margin-top:.5rem">
