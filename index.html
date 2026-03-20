@@ -596,6 +596,7 @@ function updateCalc() {
   document.getElementById('m-revenue-sub').textContent = hours + ' hod × ' + fmtN(rate) + ' Kč';
   document.getElementById('m-costs').textContent       = fmt(fixed);
   document.getElementById('m-profit').textContent      = fmt(profitPre);
+  document.getElementById('m-profit-sub').textContent  = 'Čistý příjem ~' + fmt(net);
   document.getElementById('m-be').textContent          = Math.ceil(breakeven) + ' hod';
   document.getElementById('m-be-pct').textContent      = '~' + bePct + ' % kapacity';
   document.getElementById('m-be-bar').style.width      = Math.min(100, bePct) + '%';
