@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podnikatelský záměr – Kovovýroba</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0f1923;
+  --bg2:#162030;
+  --card:#1a2535;
+  --card2:#1f2e42;
+  --accent:#f39c12;
+  --accent2:#e67e22;
+  --blue:#3498db;
+  --green:#2ecc71;
+  --red:#e74c3c;
+  --text:#ecf0f1;
+  --muted:#7f8c8d;
+  --border:#243447;
+}
+
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,#0f1923 0%,#1a2d45 60%,#0f1923 100%);
+  padding:2rem 1.5rem;
+  border-bottom:3px solid var(--accent);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(243,156,18,.03) 40px,rgba(243,156,18,.03) 80px);
+}
+.header-inner{position:relative;z-index:1}
+.header-icon{font-size:3.5rem;line-height:1;margin-bottom:.5rem;display:block}
+header h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:800;letter-spacing:-.5px}
+header h1 span{color:var(--accent)}
+.header-sub{color:var(--muted);margin-top:.4rem;font-size:.95rem}
+.badges{display:flex;justify-content:center;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.badge{background:rgba(243,156,18,.12);border:1px solid rgba(243,156,18,.4);color:var(--accent);padding:.25rem .75rem;border-radius:20px;font-size:.78rem;font-weight:600}
+
+/* ── LAYOUT ── */
+main{max-width:1200px;margin:0 auto;padding:1.5rem}
+section{margin-bottom:2.5rem}
+.sec-title{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.sec-title span{font-size:1.3rem}
+
+/* ── SCENARIO BUTTONS ── */
+.scenario-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.s-btn{
+  padding:1rem .75rem;border:2px solid var(--border);border-radius:12px;
+  background:var(--card);color:var(--muted);cursor:pointer;text-align:center;
+  transition:all .2s;font-size:.85rem;font-family:inherit;
+}
+.s-btn:hover{border-color:var(--accent);color:var(--text)}
+.s-btn.active{border-color:var(--accent);background:rgba(243,156,18,.1);color:var(--text)}
+.s-btn .s-name{font-size:1.05rem;font-weight:700;display:block;margin-bottom:.3rem}
+.s-btn.active .s-name{color:var(--accent)}
+.s-btn .s-detail{font-size:.78rem;color:var(--muted)}
+
+/* ── METRIC CARDS ── */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem}
+.m-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1rem;transition:transform .2s}
+.m-card:hover{transform:translateY(-3px)}
+.m-icon{font-size:1.6rem;margin-bottom:.4rem;display:block}
+.m-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.m-value{font-size:1.7rem;font-weight:800;margin:.2rem 0;line-height:1}
+.m-sub{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+.col-blue .m-value{color:var(--blue)}
+.col-red .m-value{color:var(--red)}
+.col-green .m-value{color:var(--green)}
+.col-orange .m-value{color:var(--accent)}
+
+/* ── BREAKEVEN BAR ── */
+.be-bar-wrap{margin-top:.75rem;background:var(--bg2);border-radius:8px;overflow:hidden;height:8px}
+.be-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:8px;transition:width .4s}
+
+/* ── CALCULATOR ── */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.calc-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.calc-card h3{font-size:.95rem;font-weight:600;margin-bottom:1.25rem;color:var(--text)}
+
+.slider-wrap{margin-bottom:1.4rem}
+.slider-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem}
+.slider-lbl{font-size:.85rem;color:var(--muted)}
+.slider-val{font-size:1.05rem;font-weight:700;color:var(--accent)}
+input[type=range]{width:100%;height:5px;border-radius:3px;appearance:none;-webkit-appearance:none;background:var(--border);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.range-limits{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:.2rem}
+
+.result-box{background:var(--bg2);border-radius:8px;padding:1rem}
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.88rem}
+.res-row:last-child{border-bottom:none;font-weight:700;font-size:.95rem;padding-top:.6rem}
+.pos{color:var(--green)}
+.neg{color:var(--red)}
+.neutral{color:var(--muted)}
+
+.annual-box{margin-top:1rem;background:rgba(52,152,219,.08);border:1px solid rgba(52,152,219,.25);border-radius:8px;padding:1rem}
+.annual-box .annual-lbl{font-size:.72rem;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem;font-weight:600}
+
+/* ── CHARTS ── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.chart-card h3{font-size:.9rem;font-weight:600;margin-bottom:1rem;color:var(--text)}
+
+/* ── COSTS TABLE ── */
+.tbl{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+.tbl thead th{background:var(--card2);padding:.7rem 1rem;text-align:left;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tbl thead th:last-child{text-align:right}
+.tbl tbody td{padding:.7rem 1rem;border-bottom:1px solid var(--border);background:var(--card);font-size:.88rem}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tfoot td{padding:.7rem 1rem;background:var(--card2);font-weight:700;color:var(--accent);font-size:.95rem}
+.tbl tfoot td:last-child{text-align:right}
+.tr{text-align:right}
+
+.cost-inp{
+  background:var(--bg2);border:1px solid var(--border);color:var(--text);
+  padding:.3rem .5rem;border-radius:6px;width:110px;text-align:right;
+  font-size:.88rem;font-family:inherit;
+}
+.cost-inp:focus{outline:none;border-color:var(--accent)}
+
+/* ── INVESTMENT TABLE ── */
+.inv-tbl{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+.inv-tbl thead th{background:var(--card2);padding:.7rem 1rem;text-align:left;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.inv-tbl thead th:last-child{text-align:right}
+.inv-tbl tbody td{padding:.7rem 1rem;border-bottom:1px solid var(--border);background:var(--card);font-size:.88rem}
+.inv-tbl tbody tr:last-child td{border-bottom:none;font-weight:700;background:var(--card2);color:var(--accent)}
+.inv-tbl tbody td:last-child{text-align:right}
+
+.alert-box{background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.3);border-radius:8px;padding:1rem;margin-top:.75rem;font-size:.88rem;line-height:1.5}
+
+/* ── TIMELINE ── */
+.timeline{padding-left:1.75rem;position:relative}
+.timeline::before{content:'';position:absolute;left:.5rem;top:8px;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent) 0%,rgba(243,156,18,.1) 100%)}
+.tl-item{position:relative;margin-bottom:1.5rem}
+.tl-item:last-child{margin-bottom:0}
+.tl-item::before{
+  content:'';position:absolute;left:-1.5rem;top:6px;
+  width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:3px solid var(--bg);
+  box-shadow:0 0 0 2px var(--accent);
+}
+.tl-period{font-size:.75rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
+.tl-goal{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.88rem;line-height:1.5}
+
+/* ── RISK TABLE ── */
+.risk-tbl{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+.risk-tbl thead th{background:var(--card2);padding:.7rem 1rem;text-align:left;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.risk-tbl tbody td{padding:.75rem 1rem;border-bottom:1px solid var(--border);background:var(--card);font-size:.85rem;vertical-align:top}
+.risk-tbl tbody tr:last-child td{border-bottom:none}
+.rb{display:inline-block;padding:.18rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700;white-space:nowrap}
+.rb-high{background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.4)}
+.rb-med{background:rgba(243,156,18,.15);color:#f39c12;border:1px solid rgba(243,156,18,.4)}
+.rb-low{background:rgba(46,204,113,.15);color:#2ecc71;border:1px solid rgba(46,204,113,.4)}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .calc-grid,.charts-grid{grid-template-columns:1fr}
+  .scenario-row{grid-template-columns:1fr}
+  .s-btn{display:grid;grid-template-columns:auto auto;justify-content:space-between;align-items:center;text-align:left;gap:.5rem}
+  .s-btn .s-name{margin-bottom:0}
+  .risk-tbl thead th:last-child{display:none}
+  .risk-tbl tbody td:last-child{display:none}
+}
+@media(max-width:480px){
+  main{padding:1rem}
+  header{padding:1.5rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <span class="header-icon">⚙️</span>
+    <h1>Kovovýroba <span>&</span> Zámečnické práce</h1>
+    <div class="header-sub">Podnikatelský záměr · Interaktivní přehled</div>
+    <div class="badges">
+      <span class="badge">OSVČ</span>
+      <span class="badge">Neplátce DPH</span>
+      <span class="badge">20+ let praxe</span>
+      <span class="badge">Zakázková výroba</span>
+      <span class="badge">B2B + B2C</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- SCENÁŘE -->
+  <section>
+    <div class="sec-title"><span>📊</span> Finanční scénáře</div>
+    <div class="scenario-row">
+      <button class="s-btn" id="btn-pessimistic" onclick="setScenario('pessimistic')">
+        <span class="s-name">Pesimistický</span>
+        <span class="s-detail">84 hod / měs · 60 % kapacity</span>
+      </button>
+      <button class="s-btn active" id="btn-realistic" onclick="setScenario('realistic')">
+        <span class="s-name">Realistický</span>
+        <span class="s-detail">140 hod / měs · 100 % kapacity</span>
+      </button>
+      <button class="s-btn" id="btn-optimistic" onclick="setScenario('optimistic')">
+        <span class="s-name">Optimistický</span>
+        <span class="s-detail">160 hod / měs · vyšší sazba</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- METRIKY -->
+  <section>
+    <div class="sec-title"><span>💡</span> Klíčové metriky – aktuální scénář</div>
+    <div class="metrics">
+      <div class="m-card col-blue">
+        <span class="m-icon">💰</span>
+        <div class="m-label">Tržby za práci / měsíc</div>
+        <div class="m-value" id="m-revenue">140 000 Kč</div>
+        <div class="m-sub" id="m-revenue-sub">140 hod × 1 000 Kč</div>
+      </div>
+      <div class="m-card col-red">
+        <span class="m-icon">📉</span>
+        <div class="m-label">Fixní náklady / měsíc</div>
+        <div class="m-value" id="m-costs">37 000 Kč</div>
+        <div class="m-sub">Nájem · energie · pojištění</div>
+      </div>
+      <div class="m-card col-green">
+        <span class="m-icon">📈</span>
+        <div class="m-label">Zisk před daní / měsíc</div>
+        <div class="m-value" id="m-profit">103 000 Kč</div>
+        <div class="m-sub" id="m-profit-sub">Čistý příjem ~63–75 tis. Kč</div>
+      </div>
+      <div class="m-card col-orange">
+        <span class="m-icon">⏱️</span>
+        <div class="m-label">Bod zvratu</div>
+        <div class="m-value" id="m-be">37 hod</div>
+        <div class="m-sub" id="m-be-pct">~26 % kapacity</div>
+        <div class="be-bar-wrap" style="margin-top:.5rem">
+          <div class="be-bar" id="m-be-bar" style="width:26%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KALKULAČKA -->
+  <section>
+    <div class="sec-title"><span>🧮</span> Interaktivní kalkulačka</div>
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h3>Nastav parametry</h3>
+
+        <div class="slider-wrap">
+          <div class="slider-head">
+            <span class="slider-lbl">Hodinová sazba</span>
+            <span class="slider-val" id="d-rate">1 000 Kč/hod</span>
+          </div>
+          <input type="range" id="s-rate" min="500" max="2000" step="50" value="1000" oninput="updateCalc()">
+          <div class="range-limits"><span>500 Kč</span><span>2 000 Kč</span></div>
+        </div>
+
+        <div class="slider-wrap">
+          <div class="slider-head">
+            <span class="slider-lbl">Hodiny / měsíc</span>
+            <span class="slider-val" id="d-hours">140 hod</span>
+          </div>
+          <input type="range" id="s-hours" min="10" max="200" step="5" value="140" oninput="updateCalc()">
+          <div class="range-limits"><span>10 hod</span><span>200 hod</span></div>
+        </div>
+
+        <div class="slider-wrap">
+          <div class="slider-head">
+            <span class="slider-lbl">Fixní náklady / měsíc</span>
+            <span class="slider-val" id="d-fixed">37 000 Kč</span>
+          </div>
+          <input type="range" id="s-fixed" min="10000" max="80000" step="1000" value="37000" oninput="updateCalc()">
+          <div class="range-limits"><span>10 tis.</span><span>80 tis.</span></div>
+        </div>
+
+        <div class="slider-wrap">
+          <div class="slider-head">
+            <span class="slider-lbl">Marže na materiálu</span>
+            <span class="slider-val" id="d-margin">15 %</span>
+          </div>
+          <input type="range" id="s-margin" min="0" max="30" step="1" value="15" oninput="updateCalc()">
+          <div class="range-limits"><span>0 %</span><span>30 %</span></div>
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <h3>Výsledek</h3>
+        <div class="result-box">
+          <div class="res-row">
+            <span>Tržby za práci</span>
+            <span class="pos" id="r-revenue">140 000 Kč</span>
+          </div>
+          <div class="res-row">
+            <span>+ Odhadovaná marže na mat.</span>
+            <span class="pos" id="r-margin">+10 500 Kč</span>
+          </div>
+          <div class="res-row">
+            <span>− Fixní náklady</span>
+            <span class="neg" id="r-fixed">−37 000 Kč</span>
+          </div>
+          <div class="res-row">
+            <span><b>Zisk před daní</b></span>
+            <span class="pos" id="r-profit">113 500 Kč</span>
+          </div>
+          <div class="res-row">
+            <span>− Daň + odvody (est. 25 %)</span>
+            <span class="neg" id="r-tax">−28 375 Kč</span>
+          </div>
+          <div class="res-row">
+            <span><b>Čistý příjem / měsíc</b></span>
+            <span class="pos" id="r-net" style="font-size:1.1rem">85 125 Kč</span>
+          </div>
+          <div class="res-row">
+            <span>Break-even (hod / měs.)</span>
+            <span id="r-be" class="neutral">37 hod</span>
+          </div>
+        </div>
+
+        <div class="annual-box">
+          <div class="annual-lbl">Roční přehled</div>
+          <div class="res-row" style="padding:.3rem 0;font-size:.85rem">
+            <span>Roční tržby za práci</span>
+            <span class="pos" id="r-ann-rev">1 680 000 Kč</span>
+          </div>
+          <div class="res-row" style="padding:.3rem 0;font-size:.85rem">
+            <span>Roční čistý příjem (est.)</span>
+            <span class="pos" id="r-ann-net">1 021 500 Kč</span>
+          </div>
+          <div class="res-row" style="padding:.3rem 0;font-size:.85rem;border-bottom:none">
+            <span>Návratnost inv. 225 000 Kč</span>
+            <span id="r-roi" class="neutral">2,2 měs.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:.76rem;color:var(--muted);margin-top:.5rem">
+      * Daň + odvody odhadnuty souhrnně na 25 % zisku (zahrnuje zálohy na daň z příjmu, soc. a zdrav. pojištění OSVČ). Skutečná výše závisí na uplatněných výdajích – konzultujte s daňovým poradcem.
+    </p>
+  </section>
+
+  <!-- GRAFY -->
+  <section>
+    <div class="sec-title"><span>📉</span> Grafy</div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Porovnání scénářů (Kč / měsíc)</h3>
+        <canvas id="chartScenarios"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Návratnost investice 225 000 Kč (kumulativní zisk)</h3>
+        <canvas id="chartROI"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIXNÍ NÁKLADY -->
+  <section>
+    <div class="sec-title"><span>🔧</span> Fixní náklady – přehled a editace</div>
+    <table class="tbl">
+      <thead><tr><th>Položka</th><th class="tr">Kč / měsíc</th></tr></thead>
+      <tbody id="costs-tbody"></tbody>
+      <tfoot>
+        <tr><td>Celkem fixní náklady</td><td class="tr" id="costs-total">37 000 Kč</td></tr>
+      </tfoot>
+    </table>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:.5rem">
+      Variabilní náklady na materiál se přeúčtovávají zákazníkovi s marží 10–20 %.
+    </p>
+  </section>
+
+  <!-- VSTUPNÍ INVESTICE -->
+  <section>
+    <div class="sec-title"><span>🏭</span> Vstupní investice</div>
+    <table class="inv-tbl">
+      <thead><tr><th>Položka</th><th>Kč</th></tr></thead>
+      <tbody>
+        <tr><td>Chybějící stroje a nářadí</td><td>120 000 – 200 000</td></tr>
+        <tr><td>Zásoby materiálu (start)</td><td>20 000 – 50 000</td></tr>
+        <tr><td>Kauce za nájem (2 měsíce)</td><td>44 000</td></tr>
+        <tr><td>Promo, web, admin náklady</td><td>10 000 – 20 000</td></tr>
+        <tr><td>Finanční rezerva (3 měsíce nákladů)</td><td>111 000</td></tr>
+        <tr><td><b>Doporučená celková rezerva</b></td><td><b>305 000 – 425 000 Kč</b></td></tr>
+      </tbody>
+    </table>
+    <div class="alert-box">
+      ⚠️ Vstupní investice <b>225 000 Kč</b> je na spodní hranici. Doporučujeme mít k dispozici min. <b>350 000 Kč</b> celkové rezervy včetně 3měsíčního provozního polštáře.
+    </div>
+  </section>
+
+  <!-- MILNÍKY -->
+  <section>
+    <div class="sec-title"><span>🎯</span> Milníky – prvních 12 měsíců</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-period">Měsíc 1–2</div>
+        <div class="tl-goal">Rozjezd dílny, první zakázky z existujících kontaktů</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-period">Měsíc 3–4</div>
+        <div class="tl-goal">Dosažení break-even, stabilizace cash-flow</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-period">Měsíc 5–8</div>
+        <div class="tl-goal">Pravidelní B2B zákazníci, aktivní web + promo</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-period">Měsíc 9–12</div>
+        <div class="tl-goal">Zhodnocení růstu, plánování prvního zaměstnance</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIZIKA -->
+  <section>
+    <div class="sec-title"><span>⚠️</span> Klíčová rizika</div>
+    <table class="risk-tbl">
+      <thead>
+        <tr><th>Riziko</th><th>Dopad</th><th>Opatření</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pomalý rozjezd zakázek</td>
+          <td><span class="rb rb-med">Střední</span></td>
+          <td>Aktivní oslovovování kontaktů, LinkedIn, lokální inzerce</td>
+        </tr>
+        <tr>
+          <td>Výpadek výrobce (nemoc / úraz)</td>
+          <td><span class="rb rb-high">Vysoký</span></td>
+          <td>Pojištění, finanční rezerva, síť výpomoci</td>
+        </tr>
+        <tr>
+          <td>Překročení obratu 2 mil. Kč → DPH</td>
+          <td><span class="rb rb-low">Nízký</span></td>
+          <td>Sledovat obrat průběžně, připravit se na registraci</td>
+        </tr>
+        <tr>
+          <td>Zdražení materiálu / energií</td>
+          <td><span class="rb rb-med">Střední</span></td>
+          <td>Kalkulovat marži, nepodepisovat fixní ceny bez doložky</td>
+        </tr>
+        <tr>
+          <td>Přechod do s.r.o. při růstu</td>
+          <td><span class="rb rb-low">Nízký</span></td>
+          <td>Plánovat dopředu, konzultace s účetní / právníkem</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  Kovovýroba &amp; Zámečnické práce · OSVČ · Podnikatelský záměr
+</footer>
+
+<script>
+/* ─── DATA ─── */
+const SCENARIOS = {
+  pessimistic: { hours:84,  rate:1000,    revenue:84000,  profit:47000,  label:'Pesimistický' },
+  realistic:   { hours:140, rate:1000,    revenue:140000, profit:103000, label:'Realistický'  },
+  optimistic:  { hours:160, rate:1093.75, revenue:175000, profit:138000, label:'Optimistický' },
+};
+
+const COSTS = [
+  { name:'Nájem dílny',                       amount:22000 },
+  { name:'Energie + provoz dílny',            amount:6000  },
+  { name:'Zálohy na soc. + zdrav. pojištění', amount:5500  },
+  { name:'Telefon, internet, admin',          amount:2000  },
+  { name:'Pojištění odpovědnosti + nářadí',   amount:1500  },
+];
+
+/* ─── HELPERS ─── */
+const fmt  = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n)) + ' Kč';
+const fmtN = n => new Intl.NumberFormat('cs-CZ').format(Math.round(n));
+
+function totalCosts() {
+  return COSTS.reduce((s, c) => s + c.amount, 0);
+}
+
+/* ─── RENDER COSTS TABLE ─── */
+function renderCosts() {
+  const tbody = document.getElementById('costs-tbody');
+  tbody.innerHTML = '';
+  COSTS.forEach((c, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${c.name}</td>
+      <td class="tr">
+        <input class="cost-inp" type="number" value="${c.amount}" min="0" step="500"
+          onchange="onCostChange(${i}, this.value)">
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('costs-total').textContent = fmt(totalCosts());
+}
+
+function onCostChange(i, v) {
+  COSTS[i].amount = Math.max(0, parseInt(v) || 0);
+  const tot = totalCosts();
+  document.getElementById('costs-total').textContent = fmt(tot);
+  // sync fixed slider
+  document.getElementById('s-fixed').value = tot;
+  updateCalc();
+}
+
+/* ─── SCENARIO ─── */
+function setScenario(key) {
+  document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + key).classList.add('active');
+
+  const s = SCENARIOS[key];
+  document.getElementById('s-rate').value  = Math.round(s.rate);
+  document.getElementById('s-hours').value = s.hours;
+  document.getElementById('s-fixed').value = totalCosts();
+
+  updateCalc();
+}
+
+/* ─── CALCULATOR ─── */
+let roiChart = null;
+
+function updateCalc() {
+  const rate   = +document.getElementById('s-rate').value;
+  const hours  = +document.getElementById('s-hours').value;
+  const fixed  = +document.getElementById('s-fixed').value;
+  const margin = +document.getElementById('s-margin').value;
+
+  // estimated material markup: assume ~70k/month material at full capacity, scale with hours
+  const matBase   = 70000 * (hours / 140);
+  const matProfit = matBase * (margin / 100);
+
+  const revenue   = rate * hours;
+  const profitPre = revenue + matProfit - fixed;
+  const tax       = Math.max(0, profitPre * 0.25);
+  const net       = profitPre - tax;
+  const breakeven = fixed / rate;
+  const bePct     = Math.round(breakeven / 140 * 100);
+  const roi       = profitPre > 0 ? (225000 / profitPre) : Infinity;
+
+  // display labels
+  document.getElementById('d-rate').textContent   = fmtN(rate) + ' Kč/hod';
+  document.getElementById('d-hours').textContent  = hours + ' hod';
+  document.getElementById('d-fixed').textContent  = fmtN(fixed) + ' Kč';
+  document.getElementById('d-margin').textContent = margin + ' %';
+
+  // result
+  document.getElementById('r-revenue').textContent = fmt(revenue);
+  document.getElementById('r-margin').textContent  = '+' + fmt(matProfit);
+  document.getElementById('r-fixed').textContent   = '−' + fmt(fixed);
+  const profitEl = document.getElementById('r-profit');
+  profitEl.textContent = fmt(profitPre);
+  profitEl.className   = profitPre >= 0 ? 'pos' : 'neg';
+  document.getElementById('r-tax').textContent     = '−' + fmt(tax);
+  const netEl = document.getElementById('r-net');
+  netEl.textContent = fmt(net);
+  netEl.className   = net >= 0 ? 'pos' : 'neg';
+  document.getElementById('r-be').textContent = Math.ceil(breakeven) + ' hod';
+  document.getElementById('r-ann-rev').textContent = fmt(revenue * 12);
+  document.getElementById('r-ann-net').textContent = fmt(net * 12);
+  document.getElementById('r-roi').textContent     = roi < 99 ? roi.toFixed(1) + ' měs.' : '—';
+
+  // metric cards
+  document.getElementById('m-revenue').textContent     = fmt(revenue);
+  document.getElementById('m-revenue-sub').textContent = hours + ' hod × ' + fmtN(rate) + ' Kč';
+  document.getElementById('m-costs').textContent       = fmt(fixed);
+  document.getElementById('m-profit').textContent      = fmt(profitPre);
+  document.getElementById('m-be').textContent          = Math.ceil(breakeven) + ' hod';
+  document.getElementById('m-be-pct').textContent      = '~' + bePct + ' % kapacity';
+  document.getElementById('m-be-bar').style.width      = Math.min(100, bePct) + '%';
+
+  // update ROI chart current-calc line
+  if (roiChart) {
+    const months = Array.from({length:25}, (_,i) => i);
+    roiChart.data.datasets[3].data = months.map(m => -225000 + profitPre * m);
+    roiChart.update('none');
+  }
+}
+
+/* ─── CHARTS ─── */
+Chart.defaults.color = '#7f8c8d';
+Chart.defaults.font.family = 'Segoe UI, system-ui, sans-serif';
+
+function initScenariosChart() {
+  const ctx = document.getElementById('chartScenarios').getContext('2d');
+  new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:['Pesimistický','Realistický','Optimistický'],
+      datasets:[
+        { label:'Tržby',         data:[84000, 140000, 175000], backgroundColor:'rgba(52,152,219,.75)',  borderColor:'rgba(52,152,219,1)',  borderWidth:1, borderRadius:4 },
+        { label:'Fixní náklady', data:[37000,  37000,  37000], backgroundColor:'rgba(231,76,60,.75)',   borderColor:'rgba(231,76,60,1)',   borderWidth:1, borderRadius:4 },
+        { label:'Zisk',          data:[47000, 103000, 138000], backgroundColor:'rgba(46,204,113,.75)',  borderColor:'rgba(46,204,113,1)',  borderWidth:1, borderRadius:4 },
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{ labels:{ color:'#bdc3c7', font:{size:11} } },
+        tooltip:{ callbacks:{ label: c => c.dataset.label + ': ' + fmtN(c.raw) + ' Kč' } }
+      },
+      scales:{
+        x:{ ticks:{ color:'#7f8c8d' }, grid:{ color:'rgba(255,255,255,.05)' } },
+        y:{ ticks:{ color:'#7f8c8d', callback: v => (v/1000)+'k' }, grid:{ color:'rgba(255,255,255,.05)' } }
+      }
+    }
+  });
+}
+
+function initROIChart() {
+  const ctx = document.getElementById('chartROI').getContext('2d');
+  const months = Array.from({length:25}, (_,i) => i);
+  const labels = months.map(m => m === 0 ? 'Start' : 'M'+m);
+
+  roiChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'Pesimistický (47k/měs)',
+          data: months.map(m => -225000 + 47000*m),
+          borderColor:'#e74c3c', backgroundColor:'transparent',
+          borderWidth:2, pointRadius:0, tension:.3,
+        },
+        {
+          label:'Realistický (103k/měs)',
+          data: months.map(m => -225000 + 103000*m),
+          borderColor:'#3498db', backgroundColor:'transparent',
+          borderWidth:2, pointRadius:0, tension:.3,
+        },
+        {
+          label:'Optimistický (138k/měs)',
+          data: months.map(m => -225000 + 138000*m),
+          borderColor:'#2ecc71', backgroundColor:'transparent',
+          borderWidth:2, pointRadius:0, tension:.3,
+        },
+        {
+          label:'Váš výpočet',
+          data: months.map(m => -225000 + 103000*m),
+          borderColor:'#f39c12', backgroundColor:'transparent',
+          borderWidth:2, borderDash:[5,5], pointRadius:0, tension:.3,
+        },
+        {
+          label:'Break-even',
+          data: months.map(() => 0),
+          borderColor:'rgba(255,255,255,.2)', backgroundColor:'transparent',
+          borderWidth:1, pointRadius:0,
+        },
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{ labels:{ color:'#bdc3c7', font:{size:11}, boxWidth:16 } },
+        tooltip:{ callbacks:{ label: c => c.dataset.label + ': ' + fmtN(c.raw) + ' Kč' } }
+      },
+      scales:{
+        x:{ ticks:{ color:'#7f8c8d', maxTicksLimit:13 }, grid:{ color:'rgba(255,255,255,.05)' } },
+        y:{
+          ticks:{ color:'#7f8c8d', callback: v => (v/1000)+'k' },
+          grid:{ color:'rgba(255,255,255,.05)' }
+        }
+      }
+    }
+  });
+}
+
+/* ─── INIT ─── */
+renderCosts();
+initScenariosChart();
+initROIChart();
+setScenario('realistic');
+</script>
+</body>
+</html>
