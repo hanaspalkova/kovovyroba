@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Podnikatelský záměr – Kovovýroba</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -39,7 +40,7 @@ header::before{
   background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(243,156,18,.03) 40px,rgba(243,156,18,.03) 80px);
 }
 .header-inner{position:relative;z-index:1}
-.header-icon{font-size:3.5rem;line-height:1;margin-bottom:.5rem;display:block}
+.header-icon{font-size:3rem;line-height:1;margin-bottom:.5rem;display:block;color:var(--accent)}
 header h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:800;letter-spacing:-.5px}
 header h1 span{color:var(--accent)}
 .header-sub{color:var(--muted);margin-top:.4rem;font-size:.95rem}
@@ -49,7 +50,8 @@ header h1 span{color:var(--accent)}
 /* ── LAYOUT ── */
 main{max-width:1200px;margin:0 auto;padding:1.5rem}
 section{margin-bottom:2.5rem}
-.sec-title{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.sec-title{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.sec-title i{font-size:1rem;opacity:.9}
 .sec-title span{font-size:1.3rem}
 
 /* ── SCENARIO BUTTONS ── */
@@ -69,7 +71,7 @@ section{margin-bottom:2.5rem}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem}
 .m-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1rem;transition:transform .2s;position:relative}
 .m-card:hover{transform:translateY(-3px)}
-.m-icon{font-size:1.6rem;margin-bottom:.4rem;display:block}
+.m-icon{font-size:1.3rem;margin-bottom:.5rem;display:block;opacity:.8}
 .m-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .m-value{font-size:1.7rem;font-weight:800;margin:.2rem 0;line-height:1}
 .m-sub{font-size:.75rem;color:var(--muted);margin-top:.25rem}
@@ -198,7 +200,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
 <header>
   <div class="header-inner">
-    <span class="header-icon">⚙️</span>
+    <span class="header-icon"><i class="fa-solid fa-gears"></i></span>
     <h1>Kovovýroba <span>&</span> Zámečnické práce</h1>
     <div class="header-sub">Podnikatelský záměr · Interaktivní přehled</div>
     <div class="badges">
@@ -215,7 +217,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
   <!-- SCENÁŘE -->
   <section>
-    <div class="sec-title"><span>📊</span> Finanční scénáře</div>
+    <div class="sec-title"><i class="fa-solid fa-chart-bar"></i> Finanční scénáře</div>
     <div class="scenario-row">
       <button class="s-btn" id="btn-pessimistic" onclick="setScenario('pessimistic')">
         <span class="s-name">Pesimistický</span>
@@ -234,32 +236,32 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
   <!-- METRIKY -->
   <section>
-    <div class="sec-title"><span>💡</span> Klíčové metriky – aktuální scénář</div>
+    <div class="sec-title"><i class="fa-solid fa-lightbulb"></i> Klíčové metriky – aktuální scénář</div>
     <div class="metrics">
       <div class="m-card col-blue">
-        <span class="m-icon">💰</span>
+        <span class="m-icon"><i class="fa-solid fa-coins"></i></span>
         <div class="m-label">Tržby za práci / měsíc</div>
         <div class="m-value" id="m-revenue">140 000 Kč</div>
         <div class="m-sub" id="m-revenue-sub">140 hod × 1 000 Kč</div>
       </div>
       <div class="m-card col-red">
-        <span class="m-icon">📉</span>
+        <span class="m-icon"><i class="fa-solid fa-arrow-trend-down"></i></span>
         <div class="m-label">Fixní náklady / měsíc</div>
         <div class="m-value" id="m-costs">37 000 Kč</div>
         <div class="m-sub">Nájem · energie · pojištění</div>
       </div>
       <div class="m-card col-green">
-        <span class="m-icon">📈</span>
+        <span class="m-icon"><i class="fa-solid fa-arrow-trend-up"></i></span>
         <div class="m-label">Zisk před daní / měsíc</div>
         <div class="m-value" id="m-profit">103 000 Kč</div>
         <div class="m-sub" id="m-profit-sub">Čistý příjem ~63–75 tis. Kč</div>
       </div>
       <div class="m-card col-orange">
-        <span class="m-icon">⏱️</span>
+        <span class="m-icon"><i class="fa-solid fa-stopwatch"></i></span>
         <div class="m-label">
           Break-even
           <details class="be-tip">
-            <summary>ℹ️</summary>
+            <summary><i class="fa-solid fa-circle-info"></i></summary>
             <div class="be-tip-box">Minimální počet hodin, které musíš měsíčně vyfakturovat, aby pokryly všechny fixní náklady. Pod touto hranicí děláš ztrátu, nad ní začínáš vydělávat.</div>
           </details>
         </div>
@@ -274,7 +276,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
   <!-- KALKULAČKA -->
   <section>
-    <div class="sec-title"><span>🧮</span> Interaktivní kalkulačka</div>
+    <div class="sec-title"><i class="fa-solid fa-calculator"></i> Interaktivní kalkulačka</div>
     <div class="calc-grid">
       <div class="calc-card">
         <h3>Nastav parametry</h3>
@@ -373,7 +375,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
   <!-- GRAFY -->
   <section>
-    <div class="sec-title"><span>📉</span> Grafy</div>
+    <div class="sec-title"><i class="fa-solid fa-chart-line"></i> Grafy</div>
     <div class="charts-grid">
       <div class="chart-card">
         <h3>Porovnání scénářů (Kč / měsíc)</h3>
@@ -388,7 +390,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
   <!-- FIXNÍ NÁKLADY -->
   <section>
-    <div class="sec-title"><span>🔧</span> Fixní náklady – přehled a editace</div>
+    <div class="sec-title"><i class="fa-solid fa-screwdriver-wrench"></i> Fixní náklady – přehled a editace</div>
     <table class="tbl">
       <thead><tr><th>Položka</th><th class="tr">Kč / měsíc</th></tr></thead>
       <tbody id="costs-tbody"></tbody>
@@ -403,7 +405,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
   <!-- VSTUPNÍ INVESTICE -->
   <section>
-    <div class="sec-title"><span>🏭</span> Vstupní investice</div>
+    <div class="sec-title"><i class="fa-solid fa-industry"></i> Vstupní investice</div>
     <table class="inv-tbl">
       <thead><tr><th>Položka</th><th>Kč</th></tr></thead>
       <tbody>
@@ -416,13 +418,13 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
       </tbody>
     </table>
     <div class="alert-box">
-      ⚠️ Vstupní investice <b>225 000 Kč</b> je na spodní hranici. Doporučujeme mít k dispozici min. <b>350 000 Kč</b> celkové rezervy včetně 3měsíčního provozního polštáře.
+      <i class="fa-solid fa-triangle-exclamation"></i> Vstupní investice <b>225 000 Kč</b> je na spodní hranici. Doporučujeme mít k dispozici min. <b>350 000 Kč</b> celkové rezervy včetně 3měsíčního provozního polštáře.
     </div>
   </section>
 
   <!-- MILNÍKY -->
   <section>
-    <div class="sec-title"><span>🎯</span> Milníky – prvních 12 měsíců</div>
+    <div class="sec-title"><i class="fa-solid fa-bullseye"></i> Milníky – prvních 12 měsíců</div>
     <div class="timeline">
       <div class="tl-item">
         <div class="tl-period">Měsíc 1–2</div>
@@ -445,7 +447,7 @@ footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;bo
 
   <!-- RIZIKA -->
   <section>
-    <div class="sec-title"><span>⚠️</span> Klíčová rizika</div>
+    <div class="sec-title"><i class="fa-solid fa-triangle-exclamation"></i> Klíčová rizika</div>
     <table class="risk-tbl">
       <thead>
         <tr><th>Riziko</th><th>Dopad</th><th>Opatření</th></tr>
