@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist spuštění – Kovovýroba</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0f1923;
+  --bg2:#162030;
+  --card:#1a2535;
+  --card2:#1f2e42;
+  --accent:#f39c12;
+  --blue:#3498db;
+  --green:#2ecc71;
+  --red:#e74c3c;
+  --yellow:#f1c40f;
+  --text:#ecf0f1;
+  --muted:#7f8c8d;
+  --border:#243447;
+}
+
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,#0f1923 0%,#1a2d45 60%,#0f1923 100%);
+  padding:2rem 1.5rem;border-bottom:3px solid var(--accent);text-align:center;
+  position:relative;overflow:hidden;
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(243,156,18,.03) 40px,rgba(243,156,18,.03) 80px);
+}
+.header-inner{position:relative;z-index:1}
+.header-icon{font-size:3.5rem;line-height:1;margin-bottom:.5rem;display:block}
+header h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:800;letter-spacing:-.5px}
+header h1 span{color:var(--accent)}
+.header-sub{color:var(--muted);margin-top:.4rem;font-size:.95rem}
+.badges{display:flex;justify-content:center;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.badge{background:rgba(243,156,18,.12);border:1px solid rgba(243,156,18,.4);color:var(--accent);padding:.25rem .75rem;border-radius:20px;font-size:.78rem;font-weight:600}
+
+/* ── MAIN ── */
+main{max-width:900px;margin:0 auto;padding:1.5rem}
+
+/* ── CELKOVÝ PROGRESS ── */
+.overall-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:1.25rem 1.5rem;margin-bottom:2rem;
+}
+.overall-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.75rem}
+.overall-title{font-weight:700;font-size:1rem}
+.overall-count{font-size:.9rem;color:var(--muted)}
+.overall-count span{color:var(--accent);font-weight:700}
+.prog-bar-wrap{background:var(--bg2);border-radius:8px;height:10px;overflow:hidden}
+.prog-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent2, #e67e22));transition:width .4s}
+:root{--accent2:#e67e22}
+.overall-pct{text-align:right;font-size:.8rem;color:var(--muted);margin-top:.4rem}
+.overall-pct span{color:var(--accent);font-weight:700}
+
+/* ── FILTRY ── */
+.filters{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+.filter-group{display:flex;gap:.4rem;flex-wrap:wrap}
+.filter-label{font-size:.78rem;color:var(--muted);align-self:center;white-space:nowrap}
+.f-btn{
+  padding:.3rem .75rem;border:1px solid var(--border);border-radius:20px;
+  background:var(--card);color:var(--muted);cursor:pointer;font-size:.78rem;
+  font-family:inherit;transition:all .15s;white-space:nowrap;
+}
+.f-btn:hover{border-color:var(--accent);color:var(--text)}
+.f-btn.active{background:rgba(243,156,18,.15);border-color:var(--accent);color:var(--text);font-weight:600}
+.f-btn.f-povinne.active{background:rgba(231,76,60,.15);border-color:var(--red);color:var(--red)}
+.f-btn.f-doporuceno.active{background:rgba(46,204,113,.15);border-color:var(--green);color:var(--green)}
+.f-btn.f-zjistit.active{background:rgba(241,196,15,.15);border-color:var(--yellow);color:var(--yellow)}
+.filter-sep{width:1px;background:var(--border);align-self:stretch;margin:0 .25rem}
+
+/* ── KATEGORIE ── */
+.category{margin-bottom:2rem}
+.cat-header{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.9rem 1.1rem;background:var(--card2);
+  border:1px solid var(--border);border-radius:12px 12px 0 0;
+}
+.cat-icon{color:var(--accent);font-size:1rem;width:1.2rem;text-align:center}
+.cat-title{font-weight:700;font-size:1rem;flex:1}
+.cat-prog-wrap{width:100px;background:var(--bg);border-radius:4px;height:6px;overflow:hidden}
+.cat-prog{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
+.cat-count{font-size:.78rem;color:var(--muted);white-space:nowrap;min-width:45px;text-align:right}
+
+.items-list{
+  border:1px solid var(--border);border-top:none;
+  border-radius:0 0 12px 12px;overflow:hidden;
+}
+
+/* ── ITEM ── */
+.item{
+  display:flex;align-items:flex-start;gap:.9rem;
+  padding:.9rem 1.1rem;background:var(--card);
+  border-bottom:1px solid var(--border);
+  transition:background .15s;
+}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--card2)}
+.item.done{opacity:.5}
+.item.hidden{display:none}
+
+.cb-wrap{flex-shrink:0;padding-top:.15rem}
+.cb{
+  width:20px;height:20px;border-radius:5px;
+  border:2px solid var(--border);background:var(--bg2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;
+}
+.cb:hover{border-color:var(--accent)}
+.cb.checked{background:var(--accent);border-color:var(--accent)}
+.cb.checked i{display:block}
+.cb i{display:none;color:#000;font-size:.7rem}
+
+.item-body{flex:1;min-width:0}
+.item-top{display:flex;align-items:flex-start;gap:.6rem;flex-wrap:wrap}
+.item-text{font-size:.9rem;line-height:1.45;flex:1}
+.item.done .item-text{text-decoration:line-through;color:var(--muted)}
+
+.item-note{font-size:.78rem;color:var(--muted);margin-top:.35rem;line-height:1.4}
+
+/* ── PRIORITY BADGES ── */
+.pb{display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .55rem;border-radius:20px;font-size:.7rem;font-weight:700;white-space:nowrap;flex-shrink:0}
+.pb-povinne{background:rgba(231,76,60,.15);color:var(--red);border:1px solid rgba(231,76,60,.35)}
+.pb-doporuceno{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.35)}
+.pb-zjistit{background:rgba(241,196,15,.15);color:var(--yellow);border:1px solid rgba(241,196,15,.35)}
+
+/* ── LEGENDA ── */
+.legend{
+  display:flex;flex-wrap:wrap;gap:.75rem;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.25rem;margin-bottom:1.5rem;
+}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--muted)}
+
+/* ── RESET BTN ── */
+.reset-wrap{text-align:right;margin-bottom:1rem}
+.reset-btn{
+  background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:.3rem .75rem;border-radius:8px;cursor:pointer;font-size:.78rem;font-family:inherit;
+  transition:all .15s;
+}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:500px){
+  main{padding:1rem}
+  .cat-prog-wrap{width:60px}
+  header{padding:1.5rem 1rem}
+  .filters{gap:.6rem}
+}
+
+/* ── PRINT ── */
+@media print{
+  body{background:#fff;color:#000}
+  header{background:#fff;border-bottom:2px solid #333;color:#000}
+  header h1,header h1 span,.header-sub{color:#000}
+  .badges,.filters,.reset-wrap{display:none}
+  .overall-card,.cat-header,.items-list,.item{background:#fff;border-color:#ccc}
+  .cat-title,.item-text,.overall-title{color:#000}
+  .item-note,.overall-count,.cat-count{color:#555}
+  .prog-bar-wrap,.cat-prog-wrap{background:#eee}
+  .prog-bar,.cat-prog{background:#333}
+  .cb{border-color:#999;background:#fff}
+  .cb.checked{background:#333;border-color:#333}
+  .item.done .item-text{text-decoration:line-through;color:#888}
+  footer{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <span class="header-icon">⚙️</span>
+    <h1>Checklist spuštění <span>Kovovýroby</span></h1>
+    <div class="header-sub">OSVČ · Pronajatá dílna · Zámečnictví, nástrojářství</div>
+    <div class="badges">
+      <span class="badge">33 kroků</span>
+      <span class="badge">5 kategorií</span>
+      <span class="badge">Stav se ukládá</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- CELKOVÝ PROGRESS -->
+  <div class="overall-card">
+    <div class="overall-top">
+      <div class="overall-title">Celkový postup</div>
+      <div class="overall-count"><span id="done-count">0</span> / <span id="total-count">0</span> splněno</div>
+    </div>
+    <div class="prog-bar-wrap"><div class="prog-bar" id="overall-bar" style="width:0%"></div></div>
+    <div class="overall-pct"><span id="overall-pct">0</span> %</div>
+  </div>
+
+  <!-- LEGENDA -->
+  <div class="legend">
+    <div class="legend-item"><span class="pb pb-povinne"><i class="fa-solid fa-circle-exclamation"></i> Povinné</span> – zákonná nebo kritická povinnost</div>
+    <div class="legend-item"><span class="pb pb-doporuceno"><i class="fa-solid fa-circle-check"></i> Doporučeno</span> – silně doporučeno, ne vždy povinné</div>
+    <div class="legend-item"><span class="pb pb-zjistit"><i class="fa-solid fa-circle-question"></i> Zjistit</span> – ověřit nebo řešit později</div>
+  </div>
+
+  <!-- FILTRY -->
+  <div class="filters">
+    <span class="filter-label">Stav:</span>
+    <div class="filter-group">
+      <button class="f-btn active" data-filter-status="vse" onclick="setFilter('status','vse')">Vše</button>
+      <button class="f-btn" data-filter-status="remaining" onclick="setFilter('status','remaining')">Zbývá</button>
+      <button class="f-btn" data-filter-status="done" onclick="setFilter('status','done')">Hotovo</button>
+    </div>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Priorita:</span>
+    <div class="filter-group">
+      <button class="f-btn active" data-filter-prio="vse" onclick="setFilter('prio','vse')">Vše</button>
+      <button class="f-btn f-povinne" data-filter-prio="povinne" onclick="setFilter('prio','povinne')">Povinné</button>
+      <button class="f-btn f-doporuceno" data-filter-prio="doporuceno" onclick="setFilter('prio','doporuceno')">Doporučeno</button>
+      <button class="f-btn f-zjistit" data-filter-prio="zjistit" onclick="setFilter('prio','zjistit')">Zjistit</button>
+    </div>
+    <div class="filter-sep"></div>
+    <button class="f-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Tisk</button>
+  </div>
+
+  <div class="reset-wrap">
+    <button class="reset-btn" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Resetovat vše</button>
+  </div>
+
+  <!-- KATEGORIE se renderují sem -->
+  <div id="categories"></div>
+
+</main>
+
+<footer>
+  Kovovýroba &amp; Zámečnické práce · OSVČ · Checklist spuštění
+</footer>
+
+<script>
+const DATA = [
+  {
+    id: 'zivnost',
+    title: 'Živnostenské oprávnění',
+    icon: 'fa-solid fa-id-card',
+    items: [
+      { id:'z1', text:'Zkontrolovat doklady o odborné způsobilosti partnera', note:'Výuční list / maturita v oboru + doklad o praxi. Nutné pro řemeslnou živnost Zámečnictví, nástrojářství.', priority:'povinne' },
+      { id:'z2', text:'Ohlásit živnost na živnostenském úřadě nebo Czech POINT', note:'Poplatek 1 000 Kč za první živnost. Lze i elektronicky přes datovou schránku.', priority:'povinne' },
+      { id:'z3', text:'Zvážit přidání volné živnosti: Výroba kovových konstrukcí a kovodělných výrobků', note:'Volná živnost nevyžaduje odbornou způsobilost – rozšíří záběr činností bez dalšího dokladu.', priority:'doporuceno' },
+      { id:'z4', text:'Zjistit, zda plánované svařování vyžaduje svářečský průkaz', note:'Průkaz dle ČSN EN ISO 9606 může být vyžadován u některých B2B zakázek nebo při práci s tlakovou technikou.', priority:'zjistit' },
+      { id:'z5', text:'Registrace na finančním úřadě (daň z příjmu)', note:'Do 15 dnů od zahájení činnosti. Lze sloučit s ohlášením živnosti přes Jednotný registrační formulář (JRF).', priority:'povinne' },
+      { id:'z6', text:'Registrace u ČSSZ a zdravotní pojišťovny', note:'Do 8 dnů od zahájení SVČ. Zálohy na sociální a zdravotní pojištění začínají plynout okamžitě.', priority:'povinne' },
+    ]
+  },
+  {
+    id: 'dilna',
+    title: 'Pronájem a vybavení dílny',
+    icon: 'fa-solid fa-industry',
+    items: [
+      { id:'d1', text:'Podepsat nájemní smlouvu – zkontrolovat výpovědní lhůtu a podmínky', note:'Důležité: kdo platí energie, co je zahrnuto v nájmu, možnost umístění firemní cedule.', priority:'povinne' },
+      { id:'d2', text:'Ověřit, zda prostor vyhovuje pro průmyslový provoz (kolaudace, elektro přípojka)', note:'Dílna musí mít přívod el. energie odpovídající strojnímu vybavení (typicky 3f 400V).', priority:'povinne' },
+      { id:'d3', text:'Sepsat předávací protokol dílny se stavem k datu převzetí', note:'Chrání vás před nároky pronajímatele na konci nájmu.', priority:'doporuceno' },
+      { id:'d4', text:'Zajistit revizi elektroinstalace a hasicích přístrojů', note:'Revize el. instalace typicky každé 3 roky, hasicí přístroje ročně.', priority:'povinne' },
+      { id:'d5', text:'Pořídit chybějící stroje a nářadí', note:'Dle inventáře – porovnat koupi vs. leasing u dražšího vybavení.', priority:'povinne' },
+      { id:'d6', text:'Označit dílnu – cedule s jménem / IČO a provozní dobou', note:'Požadováno živnostenským zákonem pro každou provozovnu.', priority:'povinne' },
+      { id:'d7', text:'Pořídit zásobu základního materiálu na první zakázky', note:'Odhadem 20 000–50 000 Kč startovací zásoba.', priority:'doporuceno' },
+    ]
+  },
+  {
+    id: 'bozp',
+    title: 'Bezpečnost práce a pojištění (BOZP)',
+    icon: 'fa-solid fa-helmet-safety',
+    items: [
+      { id:'b1', text:'Sjednat pojištění odpovědnosti za škodu z podnikatelské činnosti', note:'Kryje škody způsobené zákazníkovi nebo třetí osobě při práci. Cena od cca 3 000–8 000 Kč/rok. Srovnejte Kooperativa, Generali, Allianz.', priority:'doporuceno' },
+      { id:'b2', text:'Zvážit pojištění nářadí a strojů', note:'Kryje odcizení a poškození. Lze kombinovat s pojištěním odpovědnosti v jedné smlouvě.', priority:'doporuceno' },
+      { id:'b3', text:'Zajistit OOPP – osobní ochranné pracovní pomůcky', note:'Přilba, brýle, rukavice, obuv se zesílenou špičkou, montérky, chránič sluchu.', priority:'povinne' },
+      { id:'b4', text:'Umístit bezpečnostní značení v dílně', note:'Výstražné cedule u strojů, značení únikové cesty, lékárnička na viditelném místě.', priority:'povinne' },
+      { id:'b5', text:'Mít k dispozici lékárničku první pomoci', note:'Povinnost pro každou provozovnu.', priority:'povinne' },
+      { id:'b6', text:'Sjednat vlastní úrazové pojištění OSVČ', note:'OSVČ nemá ze zákona nárok na odškodnění pracovního úrazu jako zaměstnanec – komerční úrazové pojištění je proto důležité.', priority:'doporuceno' },
+      { id:'b7', text:'Při přijetí prvního zaměstnance: zákonné pojištění zaměstnavatele', note:'Povinné ze zákona – kryje pracovní úrazy a nemoci z povolání. Spravuje Česká pojišťovna nebo Kooperativa.', priority:'zjistit' },
+    ]
+  },
+  {
+    id: 'finance',
+    title: 'Finance a administrativa',
+    icon: 'fa-solid fa-coins',
+    items: [
+      { id:'f1', text:'Otevřít podnikatelský bankovní účet', note:'Není povinné, ale silně doporučeno – oddělíte soukromé a firemní finance. Srovnejte Fio, Raiffeisen, ČSOB.', priority:'doporuceno' },
+      { id:'f2', text:'Vybrat způsob vedení daňové evidence', note:'Paušální výdaje 80 % příjmů (max. 1,6 mil. Kč/rok) nebo skutečné výdaje. U kovovýroby s drahými stroji a materiálem zvažte skutečné výdaje – konzultujte s účetní.', priority:'povinne' },
+      { id:'f3', text:'Připravit šablonu faktury', note:'Neplátce DPH – faktura musí obsahovat: jméno + IČO, bankovní spojení, datum splatnosti, popis plnění. Bez DUZP a DPH.', priority:'povinne' },
+      { id:'f4', text:'Nastavit systém sledování příjmů a výdajů', note:'Stačí jednoduchý Excel nebo Money S1 (zdarma). Průběžně sledovat obrat kvůli limitu 2 mil. Kč pro povinnou registraci k DPH.', priority:'povinne' },
+      { id:'f5', text:'Konzultace s účetní nebo daňovým poradcem', note:'Doporučujeme ještě před prvním příjmem – správně nastavit daňovou evidenci a volbu paušálu.', priority:'doporuceno' },
+      { id:'f6', text:'Právní kontrola nájemní smlouvy', note:'Zejména výpovědní lhůta, indexace nájmu, kdo hradí opravy.', priority:'doporuceno' },
+    ]
+  },
+  {
+    id: 'marketing',
+    title: 'Prezentace a první zákazníci',
+    icon: 'fa-solid fa-bullhorn',
+    items: [
+      { id:'m1', text:'Kontaktovat všechny stávající kontakty partnera a oznámit restart', note:'E-mail nebo telefonát – rychlý způsob jak získat první poptávky ještě před otevřením dílny.', priority:'povinne' },
+      { id:'m2', text:'Vytvořit Google profil firmy (Google Moje firma)', note:'Zdarma, zobrazí se ve vyhledávání a na Maps. Přidat adresu dílny, telefon, fotky, obor.', priority:'doporuceno' },
+      { id:'m3', text:'Vytvořit základní webovou stránku', note:'Minimální verze: jméno, lokalita, seznam služeb, telefon, foto dílny.', priority:'doporuceno' },
+      { id:'m4', text:'Aktivovat nebo vytvořit firemní LinkedIn profil', note:'Pro B2B segment klíčové. Optimalizovat profil partnera, případně založit firemní stránku.', priority:'doporuceno' },
+      { id:'m5', text:'Připravit interní ceník / kalkulační šablonu pro zakázky', note:'Nemusí být veřejný – ale potřebujete vědět, jak kalkulovat cenu: materiál + práce + marže.', priority:'doporuceno' },
+      { id:'m6', text:'Nafotit dílnu a vybavení', note:'Obsah pro LinkedIn, web i sociální sítě. Autentické fotky z dílny fungují lépe než stock fotky.', priority:'doporuceno' },
+      { id:'m7', text:'Oslovit lokální firmy v okolí dílny s představením', note:'Osobní kontakt nebo letáček. Místní firmy jsou nejrychlejší cesta k prvním B2B zakázkám.', priority:'doporuceno' },
+    ]
+  },
+];
+
+/* ── STATE ── */
+const STORAGE_KEY = 'kovo_checklist_v1';
+
+function loadChecked() {
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)) || []); }
+  catch { return new Set(); }
+}
+
+function saveChecked(set) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+}
+
+let checked = loadChecked();
+let filterStatus = 'vse';
+let filterPrio   = 'vse';
+
+/* ── PRIORITY CONFIG ── */
+const PRIO = {
+  povinne:    { label:'Povinné',    cls:'pb-povinne',    icon:'fa-circle-exclamation' },
+  doporuceno: { label:'Doporučeno', cls:'pb-doporuceno', icon:'fa-circle-check'       },
+  zjistit:    { label:'Zjistit',    cls:'pb-zjistit',    icon:'fa-circle-question'    },
+};
+
+/* ── RENDER ── */
+function render() {
+  const container = document.getElementById('categories');
+  container.innerHTML = '';
+
+  DATA.forEach(cat => {
+    const catDone  = cat.items.filter(it => checked.has(it.id)).length;
+    const catTotal = cat.items.length;
+    const catPct   = Math.round(catDone / catTotal * 100);
+
+    const section = document.createElement('div');
+    section.className = 'category';
+    section.id = 'cat-' + cat.id;
+
+    section.innerHTML = `
+      <div class="cat-header">
+        <i class="${cat.icon} cat-icon"></i>
+        <div class="cat-title">${cat.title}</div>
+        <div class="cat-prog-wrap"><div class="cat-prog" style="width:${catPct}%"></div></div>
+        <div class="cat-count">${catDone} / ${catTotal}</div>
+      </div>
+      <div class="items-list" id="list-${cat.id}"></div>
+    `;
+    container.appendChild(section);
+
+    const list = section.querySelector('#list-' + cat.id);
+    cat.items.forEach(item => {
+      const isDone    = checked.has(item.id);
+      const p         = PRIO[item.priority];
+      const hidden    = shouldHide(item, isDone);
+
+      const div = document.createElement('div');
+      div.className = `item${isDone ? ' done' : ''}${hidden ? ' hidden' : ''}`;
+      div.dataset.id       = item.id;
+      div.dataset.priority = item.priority;
+      div.dataset.done     = isDone ? '1' : '0';
+
+      div.innerHTML = `
+        <div class="cb-wrap">
+          <div class="cb${isDone ? ' checked' : ''}" onclick="toggle('${item.id}')">
+            <i class="fa-solid fa-check"></i>
+          </div>
+        </div>
+        <div class="item-body">
+          <div class="item-top">
+            <div class="item-text">${item.text}</div>
+            <span class="pb ${p.cls}"><i class="fa-solid ${p.icon}"></i> ${p.label}</span>
+          </div>
+          ${item.note ? `<div class="item-note">${item.note}</div>` : ''}
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  });
+
+  updateProgress();
+  updateBadge();
+}
+
+function shouldHide(item, isDone) {
+  const statusOk = filterStatus === 'vse'
+    || (filterStatus === 'done'      &&  isDone)
+    || (filterStatus === 'remaining' && !isDone);
+  const prioOk = filterPrio === 'vse' || filterPrio === item.priority;
+  return !(statusOk && prioOk);
+}
+
+/* ── TOGGLE ── */
+function toggle(id) {
+  if (checked.has(id)) { checked.delete(id); }
+  else                  { checked.add(id);    }
+  saveChecked(checked);
+
+  const isDone = checked.has(id);
+  const div    = document.querySelector(`.item[data-id="${id}"]`);
+  if (!div) return;
+
+  div.dataset.done = isDone ? '1' : '0';
+  div.classList.toggle('done', isDone);
+  div.querySelector('.cb').classList.toggle('checked', isDone);
+  if (shouldHide({ id, priority: div.dataset.priority }, isDone)) {
+    div.classList.add('hidden');
+  }
+
+  // update category progress
+  const cat = DATA.find(c => c.items.some(it => it.id === id));
+  if (cat) {
+    const catDone  = cat.items.filter(it => checked.has(it.id)).length;
+    const catTotal = cat.items.length;
+    const pct      = Math.round(catDone / catTotal * 100);
+    const catEl    = document.getElementById('cat-' + cat.id);
+    if (catEl) {
+      catEl.querySelector('.cat-prog').style.width = pct + '%';
+      catEl.querySelector('.cat-count').textContent = catDone + ' / ' + catTotal;
+    }
+  }
+
+  updateProgress();
+  updateBadge();
+}
+
+/* ── PROGRESS ── */
+function updateProgress() {
+  const total = DATA.reduce((s, c) => s + c.items.length, 0);
+  const done  = DATA.reduce((s, c) => s + c.items.filter(it => checked.has(it.id)).length, 0);
+  const pct   = total > 0 ? Math.round(done / total * 100) : 0;
+
+  document.getElementById('done-count').textContent  = done;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('overall-bar').style.width = pct + '%';
+  document.getElementById('overall-pct').textContent = pct;
+}
+
+function updateBadge() {
+  const total = DATA.reduce((s, c) => s + c.items.length, 0);
+  const badges = document.querySelectorAll('.badge');
+  if (badges[0]) badges[0].textContent = total + ' kroků';
+}
+
+/* ── FILTERS ── */
+function setFilter(type, value) {
+  if (type === 'status') {
+    filterStatus = value;
+    document.querySelectorAll('[data-filter-status]').forEach(b => {
+      b.classList.toggle('active', b.dataset.filterStatus === value);
+    });
+  } else {
+    filterPrio = value;
+    document.querySelectorAll('[data-filter-prio]').forEach(b => {
+      b.classList.toggle('active', b.dataset.filterPrio === value);
+    });
+  }
+
+  document.querySelectorAll('.item').forEach(div => {
+    const isDone = div.dataset.done === '1';
+    const item   = { id: div.dataset.id, priority: div.dataset.priority };
+    div.classList.toggle('hidden', shouldHide(item, isDone));
+  });
+}
+
+/* ── RESET ── */
+function resetAll() {
+  if (!confirm('Opravdu chceš resetovat celý checklist?')) return;
+  checked.clear();
+  saveChecked(checked);
+  render();
+}
+
+/* ── INIT ── */
+render();
+</script>
+</body>
+</html>
